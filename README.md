@@ -6,14 +6,15 @@
 
 **Công cụ dòng lệnh (CLI) và Web Dashboard phân tích số lượng Token, tỷ lệ Cache Hit (>90%), Chi phí LLM ($ & VNĐ) và Sơ đồ Waterfall Steps trong Google Antigravity.**
 
-[![Release](https://img.shields.io/badge/Release-v1.0-6366F1?style=for-the-badge&logo=git)](https://github.com/ducconit)
+[![Release](https://img.shields.io/badge/Release-v1.0.0-6366F1?style=for-the-badge&logo=git)](https://github.com/ducconit/antigravity-stats/releases/latest)
+[![Web Dashboard](https://img.shields.io/badge/Web_Client-GitHub_Pages-10B981?style=for-the-badge&logo=githubpages)](https://ducconit.github.io/antigravity-stats/)
 [![Go Version](https://img.shields.io/badge/Go-1.22%2B-00ADD8?style=for-the-badge&logo=go)](https://golang.org)
 [![Cobra](https://img.shields.io/badge/CLI-Cobra-38BDF8?style=for-the-badge&logo=gnubash)](https://github.com/spf13/cobra)
 [![SQLite](https://img.shields.io/badge/Database-Pure_Go_SQLite-A78BFA?style=for-the-badge&logo=sqlite)](https://modernc.org/sqlite)
 [![Author](https://img.shields.io/badge/Author-DNT-6366F1?style=for-the-badge&logo=github)](https://github.com/ducconit)
 [![License](https://img.shields.io/badge/License-MIT-emerald?style=for-the-badge)](LICENSE)
 
-[🌐 Khởi chạy Dashboard](#-hướng-dẫn-sử-dụng) • [🌳 Cấu trúc Phân cấp](#-kiến-trúc-phân-cấp-3-tầng) • [⚙️ Cài đặt & Build](#-cài-đặt--build) • [👨‍💻 Tác giả](#-tác-giả)
+[📦 Cài đặt & Tải Server](#-cài-đặt--khởi-chạy) • [🌐 Mở Web Dashboard (GitHub Pages)](https://ducconit.github.io/antigravity-stats/) • [🌳 Cấu trúc Phân cấp](#-kiến-trúc-phân-cấp-3-tầng) • [💻 Xem trên Terminal](#-xem-báo-cáo-trên-terminal-cli) • [👨‍💻 Tác giả](#-tác-giả)
 
 ---
 
@@ -64,60 +65,87 @@ Hỗ trợ cả 2 mô hình linh hoạt:
 
 ---
 
-## 🛠️ Cài đặt & Build
+## 🛠️ Cài đặt & Khởi chạy
 
-### Yêu cầu hệ thống
-- **Golang**: 1.22 trở lên.
+Bạn có thể sử dụng `ag-stats` theo 2 cách cực kỳ đơn giản:
 
-### Biên dịch Binary
-```bash
-# Clone hoặc truy cập thư mục dự án
-cd /media/ducnt/Workspace/projects/labs/antigravity-plugins/statistic
+### Cách 1: Tải nhanh Binary dựng sẵn từ GitHub Releases (Khuyên dùng - Không cần cài Go)
 
-# Biên dịch bằng Makefile
-make build
+Truy cập trang **[GitHub Releases v1.0.0](https://github.com/ducconit/antigravity-stats/releases/latest)** và tải file thực thi phù hợp với hệ điều hành của bạn:
 
-# Hoặc dùng go build trực tiếp
-go build -o bin/ag-stats main.go
-```
+| Hệ điều hành | File tải về | Lệnh chạy nhanh trên Terminal |
+| :--- | :--- | :--- |
+| **Linux (x86_64)** | [`ag-stats-linux-amd64`](https://github.com/ducconit/antigravity-stats/releases/latest/download/ag-stats-linux-amd64) | `chmod +x ag-stats-linux-amd64 && ./ag-stats-linux-amd64 serve` |
+| **Linux (ARM64)** | [`ag-stats-linux-arm64`](https://github.com/ducconit/antigravity-stats/releases/latest/download/ag-stats-linux-arm64) | `chmod +x ag-stats-linux-arm64 && ./ag-stats-linux-arm64 serve` |
+| **macOS (Apple Silicon M1-M4)** | [`ag-stats-darwin-arm64`](https://github.com/ducconit/antigravity-stats/releases/latest/download/ag-stats-darwin-arm64) | `chmod +x ag-stats-darwin-arm64 && ./ag-stats-darwin-arm64 serve` |
+| **macOS (Intel)** | [`ag-stats-darwin-amd64`](https://github.com/ducconit/antigravity-stats/releases/latest/download/ag-stats-darwin-amd64) | `chmod +x ag-stats-darwin-amd64 && ./ag-stats-darwin-amd64 serve` |
+| **Windows (x64)** | [`ag-stats-windows-amd64.exe`](https://github.com/ducconit/antigravity-stats/releases/latest/download/ag-stats-windows-amd64.exe) | Chạy file `ag-stats-windows-amd64.exe serve` trong PowerShell / CMD |
 
-File thực thi sẽ nằm tại: `bin/ag-stats`.
+> **💡 Cài nhanh 1 dòng trên Linux / macOS:**
+> ```bash
+> # Linux (x86_64)
+> curl -sL https://github.com/ducconit/antigravity-stats/releases/latest/download/ag-stats-linux-amd64 -o ag-stats && chmod +x ag-stats && ./ag-stats serve
+> 
+> # macOS Apple Silicon
+> curl -sL https://github.com/ducconit/antigravity-stats/releases/latest/download/ag-stats-darwin-arm64 -o ag-stats && chmod +x ag-stats && ./ag-stats serve
+> ```
 
 ---
 
-## 📖 Hướng dẫn sử dụng
+### Cách 2: Tự biên dịch từ mã nguồn (Dành cho Lập trình viên)
 
-### 1. Khởi chạy Web Dashboard
+Yêu cầu máy tính đã cài đặt **Golang 1.22+**:
 
-#### Cách A: Chạy Server Cục bộ & Tự mở Trình duyệt (Khuyên dùng)
 ```bash
-# Khởi chạy máy chủ với cổng mặc định 58763 và tự động mở trình duyệt (-o hoặc --open)
-./bin/ag-stats serve -o
+# 1. Clone repository
+git clone https://github.com/ducconit/antigravity-stats.git
+cd antigravity-stats
 
-# Hoặc tùy chỉnh cổng khác nếu muốn:
-./bin/ag-stats serve --port 8088 -o
+# 2. Biên dịch binary
+make build
+# Hoặc dùng lệnh go build trực tiếp:
+go build -o bin/ag-stats main.go
+
+# 3. Chạy máy chủ server
+./bin/ag-stats serve
+```
+
+---
+
+## 📖 Hướng dẫn Xem Dashboard & Kết nối
+
+### 🌐 Bước 1: Khởi động Server trên máy tính
+Chạy lệnh server từ binary bạn đã tải hoặc biên dịch:
+```bash
+# Khởi chạy server lắng nghe tại cổng mặc định 58763
+./ag-stats serve
+
+# Hoặc tùy chỉnh cổng nếu muốn:
+./ag-stats serve --port 8088
 
 # Kích hoạt chế độ bảo vệ API bằng Token (khi host trên VPS hoặc mạng LAN):
-./bin/ag-stats serve --port 58763 --token "my_secret_token"
+./ag-stats serve --token "matkhaubi_mat"
 
-# Chỉ định đường dẫn thư mục Antigravity tùy biến:
-./bin/ag-stats serve -o --data-dir ~/.gemini/antigravity
+# Chỉ định đường dẫn thư mục Antigravity tùy biến (nếu dùng thư mục khác mặc định):
+./ag-stats serve --data-dir ~/.gemini/antigravity
 ```
 
-Sau khi chạy, giao diện sẽ sẵn sàng tại: **[http://127.0.0.1:58763](http://127.0.0.1:58763)**
+### 💻 Bước 2: Truy cập Web Client để xem Dashboard
 
----
+#### 👉 Lựa chọn A: Mở trực tiếp Web Dashboard trên GitHub Pages (Khuyên dùng)
+1. Mở trình duyệt và truy cập: **[https://ducconit.github.io/antigravity-stats/](https://ducconit.github.io/antigravity-stats/)**
+2. Hộp thoại **Kết nối Máy chủ Antigravity** sẽ hiển thị với địa chỉ điền sẵn `http://localhost:58763`.
+3. Bấm **Kết nối**:
+   - Nếu server không bật auth: Tự động kết nối và mở Dashboard thống kê ngay lập tức.
+   - Nếu server chạy kèm `--token`: Nhập token bảo vệ và xác nhận.
+4. Trình duyệt tự động lưu endpoint & token vào `localStorage`. Trên Header sẽ hiện trạng thái `● localhost:58763 [Đổi]` để bạn linh hoạt chuyển đổi giữa các máy chủ bất kỳ lúc nào.
 
-#### Cách B: Sử dụng Web Client trên GitHub Pages
-1. Người dùng chỉ cần tải bản build binary `ag-stats` về máy tính và chạy:
-   ```bash
-   ./ag-stats serve
-   ```
-2. Mở Web Dashboard trên GitHub Pages: **`https://ducconit.github.io/antigravity-stats/`**
-3. Hộp thoại kết nối sẽ hiển thị với endpoint mặc định `http://localhost:58763`. Bấm **Kết nối**:
-   - Nếu server không bật auth: Vào thẳng Dashboard.
-   - Nếu server bật `--token`: Nhập token bí mật đã đặt và xác nhận.
-4. Thông tin kết nối được lưu trong `localStorage` của trình duyệt. Bạn có thể nhấn vào pill **`● localhost:58763 [Đổi]`** trên Header để chuyển đổi máy chủ bất kỳ lúc nào.
+#### 👉 Lựa chọn B: Mở giao diện nhúng nội bộ (Offline không cần mạng)
+Chỉ cần thêm cờ `-o` hoặc `--open` khi chạy server:
+```bash
+./ag-stats serve -o
+```
+Server sẽ tự động mở trình duyệt tại địa chỉ cục bộ: **[http://127.0.0.1:58763](http://127.0.0.1:58763)**.
 
 ---
 
