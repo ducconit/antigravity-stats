@@ -1,4 +1,4 @@
-.PHONY: all build test clean run release
+.PHONY: all build test clean run release build-ui dev-ui
 
 unexport GOROOT
 BINARY_NAME=bin/ag-stats
@@ -10,6 +10,13 @@ build:
 	@mkdir -p bin
 	CGO_ENABLED=0 go build $(BUILD_FLAGS) -o $(BINARY_NAME) main.go
 	@echo "Build complete: $(BINARY_NAME)"
+
+build-ui:
+	cd web && bun run build
+	@echo "Vue 3 web client built to docs/ for GitHub Pages."
+
+dev-ui:
+	cd web && bun dev
 
 test:
 	go test -v ./...

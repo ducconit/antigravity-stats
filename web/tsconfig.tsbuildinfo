@@ -1,0 +1,1 @@
+{"root":["./src/main.ts","./src/router/index.ts","./src/stores/server.ts","./src/types/index.ts","./src/App.vue","./src/components/DashboardSkeleton.vue","./src/components/MascotByte.vue","./src/components/SearchableSelect.vue","./src/components/WaterfallModal.vue","./src/views/DashboardView.vue","./src/views/LoginView.vue"],"version":"5.7.3"}

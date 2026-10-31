@@ -19,3 +19,7 @@ Thumbs.db
 
 # Hallmark / scratch
 .hallmark/
+
+# Frontend dependencies
+web/node_modules/
+web/dist/

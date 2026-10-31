@@ -54,10 +54,14 @@ type SessionMetric struct {
 	TotalTokens     int64            `json:"total_tokens"`
 	CacheHitRate    float64          `json:"cache_hit_rate"` // CacheRead / (CacheRead + Input) * 100
 	CostUSD         float64          `json:"cost_usd"`
-	CostVND         float64          `json:"cost_vnd"`
-	ModelName       string           `json:"model_name"` // primary or first model
-	Models          []ModelUsageStat `json:"models"`     // grouped by model
-	Steps           []StepMetric     `json:"steps,omitempty"`
+	CostVND              float64          `json:"cost_vnd"`
+	ModelName            string           `json:"model_name"` // primary or first model
+	Models               []ModelUsageStat `json:"models"`     // grouped by model
+	AgentName            string           `json:"agent_name,omitempty"`
+	ParentConversationID string           `json:"parent_conversation_id,omitempty"`
+	NestingDepth         int              `json:"nesting_depth"`
+	IsSubagent           bool             `json:"is_subagent"`
+	Steps                []StepMetric     `json:"steps,omitempty"`
 }
 
 // ProjectStats aggregates metrics for a specific project.

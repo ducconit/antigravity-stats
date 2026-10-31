@@ -79,16 +79,20 @@ func (s *Server) refreshData(force bool) error {
 func (s *Server) Handler() http.Handler {
 	mux := http.NewServeMux()
 
-	// Public endpoints
+	// Public handshake endpoint
 	mux.HandleFunc("GET /api/config", s.handleConfig)
+
+	// Root endpoint (browser HTML redirect or API service status)
 	mux.HandleFunc("GET /", s.handleIndex)
 
-	// Protected endpoints (require auth when authToken is configured)
-	mux.HandleFunc("GET /api/stats", s.authMiddleware(s.handleStats))
-	mux.HandleFunc("GET /api/sessions", s.authMiddleware(s.handleSessions))
-	mux.HandleFunc("GET /api/sessions/{id}", s.authMiddleware(s.handleSessionDetail))
+	// API endpoints
+	mux.HandleFunc("GET /api/stats", s.handleStats)
+	mux.HandleFunc("GET /api/sessions", s.handleSessions)
+	mux.HandleFunc("GET /api/sessions/{id}", s.handleSessionDetail)
 
-	return s.corsMiddleware(mux)
+	// Wrap mux with authMiddleware (protects all endpoints except /api/config and HTML redirect at /),
+	// then with corsMiddleware (attaches CORS headers and handles preflight OPTIONS).
+	return s.corsMiddleware(s.authMiddleware(mux))
 }
 
 // Start runs the HTTP server.

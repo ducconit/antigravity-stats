@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Antigravity Token &amp; Cost Visualizer</title>
+
+    <!-- Open Graph / Social Media Preview -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://ducconit.github.io/antigravity-stats/" />
+    <meta property="og:title" content="Antigravity Stats - LLM Token &amp; Cost Visualizer" />
+    <meta property="og:description" content="Trực quan hóa tiêu thụ token, theo dõi Context Cache và chi phí cho Google Antigravity." />
+    <meta property="og:image" content="https://ducconit.github.io/antigravity-stats/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Antigravity Stats - LLM Token &amp; Cost Visualizer" />
+    <meta name="twitter:description" content="Trực quan hóa tiêu thụ token, theo dõi Context Cache và chi phí cho Google Antigravity." />
+    <meta name="twitter:image" content="https://ducconit.github.io/antigravity-stats/og-image.png" />
+    <script>window.__appStartTime = performance.now();</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script type="module" crossorigin src="./assets/index-8mu2Xton.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-BsSSX1ru.css">
+  </head>
+  <body class="bg-paper text-ink font-sans antialiased min-h-screen selection:bg-cool selection:text-paper">
+    <div id="app"></div>
+
+    <!-- Instant Native Loading Screen (Visible at Millisecond 0 while scripts download) -->
+    <div id="initial-loader" style="position:fixed;inset:0;background-color:#0d1117;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;font-family:'JetBrains Mono',ui-monospace,monospace;color:#f0f6fc;transition:opacity 0.4s ease-out;">
+      <!-- Glowing Mascot Logo -->
+      <div style="position:relative;margin-bottom:24px;">
+        <div style="position:absolute;inset:-8px;background:rgba(56,189,248,0.25);border-radius:24px;filter:blur(14px);animation:pulseGlow 2s ease-in-out infinite;"></div>
+        <div style="position:relative;background:#161b22;border:1px solid #30363d;padding:16px;border-radius:20px;box-shadow:0 10px 25px rgba(0,0,0,0.5);">
+          <svg style="width:48px;height:48px;color:#38bdf8;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="4" y="6" width="16" height="12" rx="3" stroke-width="2"/>
+            <line x1="12" y1="2" x2="12" y2="6" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="12" cy="2" r="1" fill="currentColor"/>
+            <circle cx="9" cy="11" r="1.5" fill="#10b981"/>
+            <circle cx="15" cy="11" r="1.5" fill="#10b981"/>
+            <path d="M9 15h6" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="1" y1="12" x2="4" y2="12" stroke-width="2" stroke-linecap="round"/>
+            <line x1="20" y1="12" x2="23" y2="12" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- App Name & Badge -->
+      <div style="font-size:16px;font-weight:700;letter-spacing:-0.02em;margin-bottom:8px;display:flex;align-items:center;gap:8px;">
+        <span>Antigravity Stats</span>
+        <span style="font-size:10px;background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);padding:2px 8px;border-radius:999px;">v1.0</span>
+      </div>
+      <div style="font-size:12px;color:#8b949e;margin-bottom:24px;">
+        Đang khởi tạo giao diện ứng dụng...
+      </div>
+
+      <!-- Sleek Animated Progress Bar -->
+      <div style="width:160px;height:3px;background:#21262d;border-radius:3px;overflow:hidden;position:relative;">
+        <div style="position:absolute;top:0;bottom:0;width:50%;background:linear-gradient(90deg, #38bdf8, #10b981);border-radius:3px;animation:loaderSlide 1.2s ease-in-out infinite;"></div>
+      </div>
+    </div>
+    <style>
+      @keyframes pulseGlow {
+        0%, 100% { opacity: 0.35; transform: scale(0.96); }
+        50% { opacity: 0.9; transform: scale(1.05); }
+      }
+      @keyframes loaderSlide {
+        0% { left: -50%; }
+        100% { left: 100%; }
+      }
+    </style>
+  </body>
+</html>

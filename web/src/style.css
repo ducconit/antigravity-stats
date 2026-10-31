@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper: #0d1117;
+  --color-paper-card: #161b22;
+  --color-paper-subtle: #21262d;
+
+  --color-ink: #f0f6fc;
+  --color-ink-muted: #8b949e;
+  --color-ink-dim: #6e7681;
+
+  --color-rule: #30363d;
+  --color-rule-subtle: #21262d;
+
+  --color-accent: #f59e0b;
+  --color-accent-soft: rgba(245, 158, 11, 0.15);
+  --color-accent-border: rgba(245, 158, 11, 0.3);
+
+  --color-cool: #38bdf8;
+  --color-cool-soft: rgba(56, 189, 248, 0.15);
+  --color-cool-border: rgba(56, 189, 248, 0.3);
+
+  --color-hit: #10b981;
+  --color-hit-soft: rgba(16, 185, 129, 0.15);
+  --color-hit-border: rgba(16, 185, 129, 0.3);
+
+  --color-output: #a855f7;
+  --color-output-soft: rgba(168, 85, 247, 0.15);
+  --color-output-border: rgba(168, 85, 247, 0.3);
+
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0d1117;
+}
+::-webkit-scrollbar-thumb {
+  background: #30363d;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #484f58;
+}
+
+/* Dedicated Badges with dark border matching theme */
+.badge-hit {
+  background-color: rgba(16, 185, 129, 0.15) !important;
+  color: #10b981 !important;
+  border: 1px solid rgba(16, 185, 129, 0.35) !important;
+}
+
+.badge-cool {
+  background-color: rgba(56, 189, 248, 0.15) !important;
+  color: #38bdf8 !important;
+  border: 1px solid rgba(56, 189, 248, 0.35) !important;
+}
+
+.badge-accent {
+  background-color: rgba(245, 158, 11, 0.15) !important;
+  color: #f59e0b !important;
+  border: 1px solid rgba(245, 158, 11, 0.35) !important;
+}
+
+.badge-output {
+  background-color: rgba(168, 85, 247, 0.15) !important;
+  color: #a855f7 !important;
+  border: 1px solid rgba(168, 85, 247, 0.35) !important;
+}
+
+.badge-subtle {
+  background-color: #21262d !important;
+  color: #8b949e !important;
+  border: 1px solid #30363d !important;
+}
+
+@keyframes mascotJump {
+  0% { transform: translateY(0); }
+  30% { transform: translateY(-8px) scale(1.05); }
+  50% { transform: translateY(0) scale(0.95); }
+  70% { transform: translateY(-4px); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+.mascot-jumping {
+  animation: mascotJump 0.6s ease-out;
+}

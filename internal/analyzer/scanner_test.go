@@ -3,6 +3,7 @@ package analyzer
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -96,5 +97,95 @@ func TestShortSessionIDAndRuneTruncation(t *testing.T) {
 	truncated := truncateRunes(vietnamese, 20)
 	if len([]rune(truncated)) > 20 {
 		t.Errorf("expected max 20 runes, got %d", len([]rune(truncated)))
+	}
+}
+
+func TestModelExtractionAndNormalization(t *testing.T) {
+	// 1. Verify Normalization
+	cases := []struct {
+		raw      string
+		expected string
+	}{
+		{"gemini-3.5-flash-low", "Gemini 3.5 Flash (Low)"},
+		{"gemini-3.8-flash-high", "Gemini 3.8 Flash (High)"},
+		{"claude-opus-4-6-thinking", "Claude Opus 4.6 (Thinking)"},
+		{"Claude Sonnet 4.6 (Thinking)", "Claude Sonnet 4.6 (Thinking)"},
+		{"gemini-default", "Gemini 3.5 Flash (Medium)"},
+		{"gemini-4-argon-medium", "Gemini 4 Argon (Medium)"},
+		{"gemini-3.1-pro-low", "Gemini 3.1 Pro (Low)"},
+		{"GPT-OSS 120B (Medium)", "GPT-OSS 120B (Medium)"},
+	}
+
+	for _, c := range cases {
+		got := NormalizeModelName(c.raw)
+		if got != c.expected {
+			t.Errorf("NormalizeModelName(%q) = %q, expected %q", c.raw, got, c.expected)
+		}
+	}
+
+	// 2. Verify Transcript with false positive "from ... to ..." sentences
+	tempDir := t.TempDir()
+	logPath := filepath.Join(tempDir, "transcript.jsonl")
+
+	sampleContent := `{"step_index":0,"source":"USER_EXPLICIT","type":"USER_INPUT","status":"DONE","created_at":"2026-10-31T12:00:00Z","content":"<USER_REQUEST>\nLet us test changing from A to continue. And switch from X to nil if you wish to use default.\n</USER_REQUEST>\n<USER_SETTINGS_CHANGE>\nThe user changed setting ` + "`Model Selection`" + ` from None to Claude Sonnet 4.6 (Thinking). No need to comment on this change if the user doesn't ask about it.\n</USER_SETTINGS_CHANGE>"}
+{"step_index":1,"source":"MODEL","type":"PLANNER_RESPONSE","status":"DONE","created_at":"2026-10-31T12:00:02Z","input_tokens":500,"output_tokens":100,"content":"I shifted from old to the email field."}
+`
+	if err := os.WriteFile(logPath, []byte(sampleContent), 0644); err != nil {
+		t.Fatalf("failed to write test file: %v", err)
+	}
+
+	session, err := ParseTranscriptFile("model-test", logPath, conversationMeta{})
+	if err != nil {
+		t.Fatalf("ParseTranscriptFile error: %v", err)
+	}
+
+	if session.ModelName != "Claude Sonnet 4.6 (Thinking)" {
+		t.Errorf("expected ModelName 'Claude Sonnet 4.6 (Thinking)', got %q", session.ModelName)
+	}
+
+	// Ensure false-positive strings were NEVER recorded in session.Models
+	for _, m := range session.Models {
+		if m.ModelName == "continue" || m.ModelName == "nil if you wish to use default" || m.ModelName == "the email field" {
+			t.Errorf("junk string %q mistakenly recorded as model!", m.ModelName)
+		}
+	}
+}
+
+func TestSubagentDetectionAndTitleExtraction(t *testing.T) {
+	tempDir := t.TempDir()
+	logPath := filepath.Join(tempDir, "transcript.jsonl")
+
+	sampleContent := `{"step_index":0,"source":"SYSTEM","type":"SYSTEM_MESSAGE","status":"DONE","created_at":"2026-10-31T12:00:00Z","content":"<SYSTEM_MESSAGE>\n[Message] timestamp=2026-10-31T12:00:00Z sender=parent-123 priority=MESSAGE_PRIORITY_HIGH content=Hãy độc lập đánh giá Code Review cho tính năng Toolbar chú thích màn hình.\n</SYSTEM_MESSAGE>"}
+{"step_index":1,"source":"MODEL","type":"PLANNER_RESPONSE","status":"DONE","created_at":"2026-10-31T12:00:05Z","input_tokens":300,"output_tokens":50,"content":"I have completed the review."}
+`
+	if err := os.WriteFile(logPath, []byte(sampleContent), 0644); err != nil {
+		t.Fatalf("failed to write test file: %v", err)
+	}
+
+	meta := conversationMeta{
+		AgentName:            "reviewer",
+		ParentConversationID: "parent-123",
+		NestingDepth:         1,
+	}
+
+	session, err := ParseTranscriptFile("sub-008b89f3", logPath, meta)
+	if err != nil {
+		t.Fatalf("ParseTranscriptFile error: %v", err)
+	}
+
+	if !session.IsSubagent {
+		t.Errorf("expected session.IsSubagent to be true")
+	}
+	if session.AgentName != "reviewer" {
+		t.Errorf("expected AgentName 'reviewer', got %q", session.AgentName)
+	}
+	if session.ParentConversationID != "parent-123" {
+		t.Errorf("expected ParentConversationID 'parent-123', got %q", session.ParentConversationID)
+	}
+	if session.NestingDepth != 1 {
+		t.Errorf("expected NestingDepth 1, got %d", session.NestingDepth)
+	}
+	if !strings.Contains(session.Title, "Hãy độc lập đánh giá Code Review") {
+		t.Errorf("expected Title to contain task description, got %q", session.Title)
 	}
 }

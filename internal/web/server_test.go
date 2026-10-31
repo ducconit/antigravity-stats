@@ -296,4 +296,121 @@ func TestServerAuthentication(t *testing.T) {
 			t.Errorf("expected 200 OK, got %d", w.Code)
 		}
 	})
+
+	// 6. Request with raw Authorization header (without Bearer) should succeed
+	t.Run("GET /api/stats with raw Authorization header returns 200", func(t *testing.T) {
+		req := httptest.NewRequest("GET", "/api/stats", nil)
+		req.Header.Set("Authorization", expectedToken)
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		if w.Code != http.StatusOK {
+			t.Errorf("expected 200 OK, got %d", w.Code)
+		}
+	})
+
+	// 7. Request with ?api_key= query parameter should succeed
+	t.Run("GET /api/stats with ?api_key= query param returns 200", func(t *testing.T) {
+		req := httptest.NewRequest("GET", "/api/stats?api_key="+expectedToken, nil)
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		if w.Code != http.StatusOK {
+			t.Errorf("expected 200 OK, got %d", w.Code)
+		}
+	})
+
+	// 8. Request with ?token= query parameter should succeed
+	t.Run("GET /api/stats with ?token= query param returns 200", func(t *testing.T) {
+		req := httptest.NewRequest("GET", "/api/stats?token="+expectedToken, nil)
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		if w.Code != http.StatusOK {
+			t.Errorf("expected 200 OK, got %d", w.Code)
+		}
+	})
+
+	// 9. GET /api/sessions without token should fail with 401
+	t.Run("GET /api/sessions without token returns 401", func(t *testing.T) {
+		req := httptest.NewRequest("GET", "/api/sessions", nil)
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		if w.Code != http.StatusUnauthorized {
+			t.Errorf("expected 401 Unauthorized, got %d", w.Code)
+		}
+	})
+
+	// 10. GET /api/sessions with valid token should succeed
+	t.Run("GET /api/sessions with valid token returns 200", func(t *testing.T) {
+		req := httptest.NewRequest("GET", "/api/sessions", nil)
+		req.Header.Set("X-API-Key", expectedToken)
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		if w.Code != http.StatusOK {
+			t.Errorf("expected 200 OK, got %d", w.Code)
+		}
+	})
+
+	// 11. GET /api/sessions/{id} without token should fail with 401
+	t.Run("GET /api/sessions/{id} without token returns 401", func(t *testing.T) {
+		req := httptest.NewRequest("GET", "/api/sessions/test-session-4567", nil)
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		if w.Code != http.StatusUnauthorized {
+			t.Errorf("expected 401 Unauthorized, got %d", w.Code)
+		}
+	})
+
+	// 12. GET /api/sessions/{id} with valid token should succeed
+	t.Run("GET /api/sessions/{id} with valid token returns 200", func(t *testing.T) {
+		req := httptest.NewRequest("GET", "/api/sessions/test-session-4567", nil)
+		req.Header.Set("X-API-Key", expectedToken)
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		if w.Code != http.StatusOK {
+			t.Errorf("expected 200 OK, got %d", w.Code)
+		}
+	})
+
+	// 13. Root endpoint JSON request without token should fail with 401
+	t.Run("GET / without token (JSON) returns 401", func(t *testing.T) {
+		req := httptest.NewRequest("GET", "/", nil)
+		req.Header.Set("Accept", "application/json")
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		if w.Code != http.StatusUnauthorized {
+			t.Errorf("expected 401 Unauthorized, got %d", w.Code)
+		}
+	})
+
+	// 14. Root endpoint JSON request with valid token should succeed
+	t.Run("GET / with valid token (JSON) returns 200", func(t *testing.T) {
+		req := httptest.NewRequest("GET", "/", nil)
+		req.Header.Set("Accept", "application/json")
+		req.Header.Set("X-API-Key", expectedToken)
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		if w.Code != http.StatusOK {
+			t.Errorf("expected 200 OK, got %d", w.Code)
+		}
+	})
+
+	// 15. Root endpoint HTML request should redirect to dashboard without token (public browser entry)
+	t.Run("GET / with HTML Accept redirects to dashboard without token", func(t *testing.T) {
+		req := httptest.NewRequest("GET", "/", nil)
+		req.Header.Set("Accept", "text/html,application/xhtml+xml")
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		if w.Code != http.StatusTemporaryRedirect {
+			t.Errorf("expected 307 Temporary Redirect, got %d", w.Code)
+		}
+	})
 }
