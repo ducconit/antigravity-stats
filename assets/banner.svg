@@ -1,0 +1,201 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c16"/>
+      <stop offset="50%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#050811"/>
+    </linearGradient>
+
+    <!-- Accent Glow Gradients -->
+    <radialGradient id="indigoGlow" cx="20%" cy="30%" r="60%">
+      <stop offset="0%" stop-color="#6366f1" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#6366f1" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="emeraldGlow" cx="80%" cy="70%" r="60%">
+      <stop offset="0%" stop-color="#10b981" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#10b981" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.95"/>
+    </linearGradient>
+
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="50%" stop-color="#c7d2fe"/>
+      <stop offset="100%" stop-color="#38bdf8"/>
+    </linearGradient>
+
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+
+    <!-- Subtle Grid Pattern -->
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="1" stroke-opacity="0.4"/>
+    </pattern>
+
+    <!-- Drop Shadows -->
+    <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="1200" height="630" fill="url(#bgGrad)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <!-- Glows -->
+  <circle cx="200" cy="180" r="350" fill="url(#indigoGlow)"/>
+  <circle cx="1000" cy="450" r="400" fill="url(#emeraldGlow)"/>
+
+  <!-- Left: Branding & Core Typography -->
+  <g transform="translate(80, 110)">
+    <!-- Badge -->
+    <rect width="210" height="34" rx="17" fill="#6366f1" fill-opacity="0.15" stroke="#6366f1" stroke-opacity="0.4" stroke-width="1.5"/>
+    <circle cx="20" cy="17" r="4" fill="#10b981"/>
+    <text x="35" y="22" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#a5b4fc" letter-spacing="1">ANTIGRAVITY TOOLKIT</text>
+
+    <!-- Logo Icon & Title -->
+    <g transform="translate(0, 60)">
+      <rect width="56" height="56" rx="16" fill="url(#accentGrad)" filter="url(#glow)"/>
+      <path d="M 32 14 L 18 32 L 28 32 L 24 44 L 40 26 L 30 26 Z" fill="#ffffff"/>
+      <text x="74" y="40" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="44" font-weight="900" fill="url(#textGrad)" letter-spacing="-0.5">Antigravity</text>
+    </g>
+
+    <!-- Main Headline -->
+    <text x="0" y="195" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="42" font-weight="800" fill="#ffffff" letter-spacing="-0.5">
+      Token &amp; Cost Visualizer
+    </text>
+
+    <!-- Subtitle -->
+    <text x="0" y="240" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="500" fill="#94a3b8">
+      Phân tích Token, Tỷ lệ Cache Hit (>90%) &amp; Waterfall Steps
+    </text>
+
+    <!-- Tech Stack Pills -->
+    <g transform="translate(0, 280)">
+      <!-- Go Pill -->
+      <rect x="0" y="0" width="90" height="32" rx="16" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+      <text x="45" y="20" font-family="monospace" font-size="13" font-weight="600" fill="#00add8" text-anchor="middle">Golang</text>
+
+      <!-- Cobra Pill -->
+      <rect x="100" y="0" width="85" height="32" rx="16" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+      <text x="142" y="20" font-family="monospace" font-size="13" font-weight="600" fill="#38bdf8" text-anchor="middle">Cobra</text>
+
+      <!-- SQLite Pill -->
+      <rect x="195" y="0" width="115" height="32" rx="16" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+      <text x="252" y="20" font-family="monospace" font-size="13" font-weight="600" fill="#a78bfa" text-anchor="middle">Pure SQLite</text>
+
+      <!-- Web Dashboard Pill -->
+      <rect x="320" y="0" width="135" height="32" rx="16" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+      <text x="387" y="20" font-family="monospace" font-size="13" font-weight="600" fill="#34d399" text-anchor="middle">Web Dashboard</text>
+    </g>
+
+    <!-- Author Badge -->
+    <g transform="translate(0, 360)">
+      <rect width="260" height="42" rx="21" fill="#111827" stroke="#374151" stroke-width="1.2"/>
+      <!-- GitHub Icon -->
+      <path transform="translate(14, 11) scale(0.85)" fill="#e2e8f0" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+      <text x="44" y="26" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#f8fafc">
+        Author: <tspan fill="#818cf8" font-weight="700">DNT</tspan> (@ducconit)
+      </text>
+    </g>
+  </g>
+
+  <!-- Right: Dashboard Preview Cards Illustration -->
+  <g transform="translate(680, 95)" filter="url(#cardShadow)">
+    
+    <!-- Big Mockup Card -->
+    <rect width="440" height="440" rx="20" fill="url(#cardGrad)" stroke="#334155" stroke-width="1.5"/>
+
+    <!-- Window Topbar -->
+    <g transform="translate(20, 20)">
+      <circle cx="6" cy="6" r="5" fill="#ef4444"/>
+      <circle cx="22" cy="6" r="5" fill="#f59e0b"/>
+      <circle cx="38" cy="6" r="5" fill="#10b981"/>
+      <rect x="70" y="-1" width="220" height="15" rx="7" fill="#334155" fill-opacity="0.4"/>
+      <text x="180" y="10" font-family="monospace" font-size="9" fill="#94a3b8" text-anchor="middle">http://127.0.0.1:58763</text>
+    </g>
+
+    <!-- Mini KPI Row -->
+    <g transform="translate(20, 55)">
+      <!-- KPI 1 -->
+      <rect width="125" height="75" rx="12" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+      <text x="12" y="22" font-family="-apple-system, sans-serif" font-size="11" fill="#94a3b8">Tổng Tokens</text>
+      <text x="12" y="48" font-family="monospace" font-size="19" font-weight="bold" fill="#ffffff">1.65B</text>
+      <text x="12" y="65" font-family="-apple-system, sans-serif" font-size="9" fill="#6366f1">314 Sessions</text>
+
+      <!-- KPI 2 (Cache Hit) -->
+      <rect x="135" width="130" height="75" rx="12" fill="#0f172a" stroke="#10b981" stroke-width="1" stroke-opacity="0.4"/>
+      <text x="147" y="22" font-family="-apple-system, sans-serif" font-size="11" fill="#34d399">Cache Hit %</text>
+      <text x="147" y="48" font-family="monospace" font-size="19" font-weight="bold" fill="#10b981">93.8%</text>
+      <text x="147" y="65" font-family="-apple-system, sans-serif" font-size="9" fill="#6ee7b7">Tiết kiệm 75% phí</text>
+
+      <!-- KPI 3 (Cost) -->
+      <rect x="275" width="125" height="75" rx="12" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+      <text x="287" y="22" font-family="-apple-system, sans-serif" font-size="11" fill="#94a3b8">Chi phí</text>
+      <text x="287" y="48" font-family="monospace" font-size="19" font-weight="bold" fill="#38bdf8">$51.42</text>
+      <text x="287" y="65" font-family="-apple-system, sans-serif" font-size="9" fill="#94a3b8">~1.3M VNĐ</text>
+    </g>
+
+    <!-- Mini Hierarchy Waterfall Section -->
+    <g transform="translate(20, 145)">
+      <rect width="400" height="270" rx="14" fill="#090d16" stroke="#1e293b" stroke-width="1"/>
+      
+      <!-- Hierarchy Title -->
+      <text x="15" y="25" font-family="-apple-system, sans-serif" font-size="12" font-weight="bold" fill="#e2e8f0">
+        📁 Dự án: agent-pilot-extension
+      </text>
+      <rect x="310" y="12" width="75" height="18" rx="9" fill="#6366f1" fill-opacity="0.2"/>
+      <text x="347" y="24" font-family="monospace" font-size="9" font-weight="bold" fill="#818cf8" text-anchor="middle">28 Sessions</text>
+
+      <!-- Step 0 -->
+      <g transform="translate(15, 45)">
+        <rect width="370" height="45" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+        <circle cx="20" cy="22" r="10" fill="#3b82f6" fill-opacity="0.2"/>
+        <text x="20" y="26" font-size="11" text-anchor="middle">👤</text>
+        <text x="40" y="19" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" fill="#f1f5f9">Step 0 &bull; User Request</text>
+        <text x="40" y="34" font-family="-apple-system, sans-serif" font-size="10" fill="#94a3b8">Khởi tạo tác vụ phân tích hiệu năng...</text>
+      </g>
+
+      <!-- Step 1 (Cache Miss) -->
+      <g transform="translate(15, 100)">
+        <rect width="370" height="48" rx="8" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+        <circle cx="20" cy="24" r="10" fill="#f59e0b" fill-opacity="0.2"/>
+        <text x="20" y="28" font-size="11" text-anchor="middle">🤖</text>
+        <text x="40" y="19" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" fill="#f1f5f9">Step 1 &bull; Tool Call (Cache Miss)</text>
+        <text x="40" y="36" font-family="monospace" font-size="10" fill="#f59e0b">In: 23K | Cache: 0% | Out: 470</text>
+        <rect x="290" y="14" width="70" height="20" rx="6" fill="#f59e0b" fill-opacity="0.15"/>
+        <text x="325" y="27" font-family="monospace" font-size="9" font-weight="bold" fill="#fbbf24" text-anchor="middle">Miss: 0%</text>
+      </g>
+
+      <!-- Step 3 (Cache Hit >90%) -->
+      <g transform="translate(15, 158)">
+        <rect width="370" height="48" rx="8" fill="#064e3b" fill-opacity="0.3" stroke="#10b981" stroke-width="1.2"/>
+        <circle cx="20" cy="24" r="10" fill="#10b981" fill-opacity="0.3"/>
+        <text x="20" y="28" font-size="11" text-anchor="middle">⚡</text>
+        <text x="40" y="19" font-family="-apple-system, sans-serif" font-size="11" font-weight="bold" fill="#34d399">Step 3 &bull; Tool Exec (Cache Hit!)</text>
+        <text x="40" y="36" font-family="monospace" font-size="10" fill="#6ee7b7">In: 3.3K | Cache: 20.3K (Hit!) | Out: 353</text>
+        <rect x="290" y="14" width="70" height="20" rx="6" fill="#10b981" fill-opacity="0.25"/>
+        <text x="325" y="27" font-family="monospace" font-size="9" font-weight="bold" fill="#34d399" text-anchor="middle">Hit: 92.5%</text>
+      </g>
+
+      <!-- Model Breakdown Tag -->
+      <g transform="translate(15, 218)">
+        <rect width="370" height="38" rx="8" fill="#1e1b4b" fill-opacity="0.6" stroke="#6366f1" stroke-width="1"/>
+        <text x="14" y="23" font-family="monospace" font-size="10" font-weight="bold" fill="#c7d2fe">🤖 Model: Gemini 3.8 Flash (High) &bull; Cost: $0.0078</text>
+      </g>
+    </g>
+
+  </g>
+</svg>

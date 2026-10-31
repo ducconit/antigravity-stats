@@ -1,0 +1,21 @@
+# Binaries for programs and plugins
+bin/
+dist/
+
+# Logs and temporary files
+*.log
+tmp/
+*.tmp
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# IDE and Editor Directories
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Hallmark / scratch
+.hallmark/
