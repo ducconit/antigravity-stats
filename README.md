@@ -4,7 +4,7 @@
 
 # ⚡ Antigravity Token & Cost Visualizer (`ag-stats`)
 
-**Công cụ dòng lệnh (CLI) và Web Dashboard phân tích số lượng Token, tỷ lệ Cache Hit (>90%), Chi phí LLM ($ & VNĐ) và Sơ đồ Waterfall Steps trong Google Antigravity.**
+**Công cụ dòng lệnh (CLI) và Web Dashboard phân tích số lượng Token, tỷ lệ Cache Hit, Chi phí LLM ($ & VNĐ) và Sơ đồ Waterfall Steps trong Google Antigravity.**
 
 [![Release](https://img.shields.io/badge/Release-v1.0.0-6366F1?style=for-the-badge&logo=git)](https://github.com/ducconit/antigravity-stats/releases/latest)
 [![Web Dashboard](https://img.shields.io/badge/Web_Client-GitHub_Pages-10B981?style=for-the-badge&logo=githubpages)](https://ducconit.github.io/antigravity-stats/)
@@ -22,12 +22,12 @@
 
 ## 📖 Giới thiệu
 
-Trong quá trình làm việc với **Google Antigravity**, mỗi câu lệnh prompt, mỗi lần agent gọi công cụ (`run_command`, `read_file`, MCP tools) và quá trình Chain-of-Thought (CoT) thinking đều tiêu tốn một lượng token nhất định. Nhờ cơ chế **Context Caching (KV Cache)** của cụm máy chủ Gemini, chi phí và độ trễ được tối ưu tới hơn 75-90%.
+Trong quá trình làm việc với **Google Antigravity**, mỗi câu lệnh prompt, mỗi lần agent gọi công cụ (`run_command`, `read_file`, MCP tools) và quá trình Chain-of-Thought (CoT) thinking đều tiêu tốn một lượng token nhất định. Nhờ cơ chế **Context Caching (KV Cache)** của cụm máy chủ Gemini, chi phí và độ trễ được tối ưu đáng kể.
 
 Tuy nhiên, người dùng khó có thể theo dõi trực tiếp:
 - *Mỗi dự án đã ngốn bao nhiêu token?*
 - *Hội thoại nào tiêu tốn nhiều tiền nhất?*
-- *Tỷ lệ Cache Hit qua các step chuyển biến ra sao (từ Cache Miss 0% ở Turn 1 sang Cache Hit > 90% ở các Turn sau)?*
+- *Tỷ lệ Cache Hit qua các step chuyển biến ra sao (từ Cache Miss ở Turn 1 sang tái sử dụng Cache ở các Turn sau)?*
 - *Những model nào (`Gemini 3.8 Flash`, `Claude Opus 4.6`, `GPT-OSS 120B`) đã được sử dụng?*
 
 **`ag-stats`** được xây dựng để giải quyết triệt để bài toán này — mang lại một giải pháp thống kê **hiệu năng cao, an toàn tuyệt đối và trực quan hóa sinh động**.
