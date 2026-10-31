@@ -43,7 +43,22 @@ func TestServerEndpoints(t *testing.T) {
 	handler := server.Handler()
 
 	// 1. Test GET /
-	t.Run("GET /", func(t *testing.T) {
+	t.Run("GET / with HTML Accept redirects to dashboard", func(t *testing.T) {
+		req := httptest.NewRequest("GET", "/", nil)
+		req.Header.Set("Accept", "text/html,application/xhtml+xml")
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		if w.Code != http.StatusTemporaryRedirect {
+			t.Errorf("expected 307 Temporary Redirect, got %d", w.Code)
+		}
+		loc := w.Header().Get("Location")
+		if loc != DefaultDashboardURL {
+			t.Errorf("expected redirect to %s, got %s", DefaultDashboardURL, loc)
+		}
+	})
+
+	t.Run("GET / with JSON returns service info", func(t *testing.T) {
 		req := httptest.NewRequest("GET", "/", nil)
 		w := httptest.NewRecorder()
 		handler.ServeHTTP(w, req)
@@ -51,9 +66,22 @@ func TestServerEndpoints(t *testing.T) {
 		if w.Code != http.StatusOK {
 			t.Errorf("expected 200 OK, got %d", w.Code)
 		}
-		contentType := w.Header().Get("Content-Type")
-		if contentType != "text/html; charset=utf-8" {
-			t.Errorf("expected text/html, got %s", contentType)
+		var root RootResponse
+		if err := json.Unmarshal(w.Body.Bytes(), &root); err != nil {
+			t.Fatalf("failed to decode root JSON: %v", err)
+		}
+		if root.Status != "running" || root.DashboardURL != DefaultDashboardURL {
+			t.Errorf("unexpected root payload: %+v", root)
+		}
+	})
+
+	t.Run("GET /invalid returns 404", func(t *testing.T) {
+		req := httptest.NewRequest("GET", "/invalid-path", nil)
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		if w.Code != http.StatusNotFound {
+			t.Errorf("expected 404, got %d", w.Code)
 		}
 	})
 

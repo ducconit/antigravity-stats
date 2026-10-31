@@ -847,14 +847,38 @@ button:disabled {
     }
 
     async function initConnection() {
-      const savedEndpoint = localStorage.getItem('ag_endpoint') || 'http://localhost:58763';
-      const savedToken = localStorage.getItem('ag_token') || '';
-      currentEndpoint = savedEndpoint;
-      currentToken = savedToken;
+      // 1. Read URL query parameters (?host=... / ?endpoint=... and ?token=...)
+      const urlParams = new URLSearchParams(window.location.search);
+      const queryHost = (urlParams.get('host') || urlParams.get('endpoint') || '').trim();
+      const queryToken = urlParams.get('token');
 
-      const ok = await testAndSaveConnection(savedEndpoint, savedToken, true);
+      // 2. Resolve target endpoint: query host -> localStorage -> default localhost:58763
+      let targetEndpoint = queryHost;
+      if (!targetEndpoint) {
+        targetEndpoint = localStorage.getItem('ag_endpoint') || 'http://localhost:58763';
+      }
+
+      // 3. Resolve target token: query token -> localStorage -> empty
+      let targetToken = '';
+      if (queryToken !== null) {
+        targetToken = queryToken.trim();
+      } else {
+        targetToken = localStorage.getItem('ag_token') || '';
+      }
+
+      currentEndpoint = targetEndpoint;
+      currentToken = targetToken;
+
+      const epInput = document.getElementById('conn-endpoint-input');
+      if (epInput) epInput.value = targetEndpoint;
+      const tokInput = document.getElementById('conn-token-input');
+      if (tokInput) tokInput.value = targetToken;
+
+      const ok = await testAndSaveConnection(targetEndpoint, targetToken, true);
       if (!ok) {
         openConnectModal();
+      } else {
+        closeConnectModal();
       }
     }
 

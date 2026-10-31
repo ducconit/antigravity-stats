@@ -28,14 +28,16 @@ var serveCmd = &cobra.Command{
 		server := web.NewServer(scanner, serveHost, servePort, authToken)
 
 		url := fmt.Sprintf("http://%s:%d", serveHost, servePort)
+		dashboardURL := web.DefaultDashboardURL
 		if autoOpen {
 			go func() {
 				time.Sleep(500 * time.Millisecond)
-				openBrowser(url)
+				openBrowser(dashboardURL)
 			}()
 		}
 
-		fmt.Printf("🚀 Đang khởi chạy Antigravity Dashboard tại %s\n", url)
+		fmt.Printf("🚀 Antigravity API Server đang chạy tại: %s\n", url)
+		fmt.Printf("🌐 Web Dashboard (GitHub Pages): %s\n", dashboardURL)
 		fmt.Printf("📂 Nguồn dữ liệu: %s\n", scanner.DataDir())
 		if authToken != "" {
 			fmt.Printf("🔒 Chế độ xác thực: BẬT (Yêu cầu Bearer Token / X-API-Key)\n")

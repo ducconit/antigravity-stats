@@ -55,7 +55,7 @@ Hỗ trợ cả 2 mô hình linh hoạt:
 - **Handshake API (`/api/config`)**: Khi mở Web Client, giao diện tự động bắt tay với server Go tại `http://localhost:58763` (hoặc endpoint tuỳ chọn).
 - **CORS & Private Network Access (PNA)**: Server tích hợp sẵn CORS và Chromium PNA header (`Access-Control-Allow-Private-Network`), đảm bảo Chrome/Edge/Firefox không chặn request từ trang HTTPS của GitHub Pages về `localhost`.
 - **Tùy chọn Bảo mật (Optional Auth)**: Mặc định không cần auth. Nếu muốn mở server ra mạng LAN hoặc VPS, bạn có thể truyền cờ `--token <secret>` để kích hoạt xác thực Bearer token an toàn.
-- **Chế độ Ngoại tuyến (Embedded Offline)**: Khi không có Internet, Web Server cục bộ vẫn phục vụ đầy đủ giao diện nhúng sẵn qua `embed.FS`.
+- **Tối ưu hóa Binary Siêu Nhẹ (~12 MB)**: Server tách biệt hoàn toàn phần giao diện web sang GitHub Pages, loại bỏ việc nhúng HTML/CSS/JS nặng nề vào mã nguồn Go. Binary được biên dịch với cờ tối ưu hóa chuyên sâu `-trimpath -ldflags="-s -w"` giúp loại bỏ toàn bộ DWARF debug tables, symbol tables và đường dẫn máy build.
 
 ### 4. ⚡ Siêu tốc & An toàn tuyệt đối
 - **Worker Pool song song**: Quét hơn **314+ sessions** với hơn **95.000 steps** trong chưa đầy **0.5 giây**.
@@ -214,7 +214,7 @@ statistic                    | 2          | 18.57M     |   92.8%  | $0.6113
 │   ├── root.go          # Cobra Root Command, flags cấu hình (--data-dir, --pricing)
 │   ├── serve.go         # Lệnh 'serve' với flags --port, --token, --open
 │   └── stats.go         # Lệnh 'stats' (alias 'summary') hiển thị báo cáo terminal
-├── docs/                # Thư mục web client phục vụ triển khai tĩnh GitHub Pages
+├── docs/                # Giao diện Web Dashboard SPA tĩnh lưu trữ trên GitHub Pages
 ├── internal/
 │   ├── analyzer/        # Module bóc tách dữ liệu transcript và tính toán chi phí
 │   │   ├── types.go     # Structs: StepMetric, SessionMetric, ProjectStats, GlobalStats
@@ -223,11 +223,8 @@ statistic                    | 2          | 18.57M     |   92.8%  | $0.6113
 │   │   └── scanner_test.go # Unit test cho scanner, rune truncation & pricing
 │   └── web/
 │       ├── server.go    # HTTP Handlers REST APIs, CORS, Private Network Access & Auth
-│       ├── server_test.go # Unit test toàn diện cho HTTP endpoints, CORS & Auth
-│       └── static/      # Giao diện Web SPA (Tailwind + Chart.js) nhúng qua embed.FS
-│           ├── embed.go     # File embed.FS
-│           └── index.html   # Giao diện Web Dashboard SPA với mascot Byte
-├── Makefile             # Quản lý build, test, export-pages, release, clean
+│       └── server_test.go # Unit test toàn diện cho HTTP endpoints, CORS & Auth
+├── Makefile             # Quản lý build, test, release cross-platform, clean
 ├── README.md            # Tài liệu dự án
 ├── go.mod
 ├── go.sum
