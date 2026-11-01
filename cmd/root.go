@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 
 	"antigravity-stats/internal/analyzer"
@@ -12,7 +13,13 @@ import (
 var (
 	dataDir     string
 	pricingSpec string
+	staticFS    http.FileSystem
 )
+
+// SetStaticFS injects the embedded static file system for web UI.
+func SetStaticFS(fs http.FileSystem) {
+	staticFS = fs
+}
 
 // RootCmd is the base command for the antigravity-stats CLI.
 var RootCmd = &cobra.Command{

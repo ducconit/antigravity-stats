@@ -23,6 +23,7 @@ type Server struct {
 	cachedSessions []*analyzer.SessionMetric
 	cacheMutex     sync.RWMutex
 	lastScan       time.Time
+	staticFS       http.FileSystem
 }
 
 // ConfigResponse represents the server handshake payload.
@@ -53,6 +54,16 @@ func NewServer(scanner *analyzer.Scanner, host string, port int, authToken strin
 		port:      port,
 		authToken: authToken,
 	}
+}
+
+// SetStaticFS attaches an embedded or local filesystem to serve Web UI assets directly.
+func (s *Server) SetStaticFS(fs http.FileSystem) {
+	s.staticFS = fs
+}
+
+// HasStaticFS reports whether a static filesystem is configured.
+func (s *Server) HasStaticFS() bool {
+	return s.staticFS != nil
 }
 
 // refreshData refreshes cached scanner data if older than 10 seconds.

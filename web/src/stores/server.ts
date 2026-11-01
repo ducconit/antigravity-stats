@@ -34,6 +34,15 @@ export function clearAuthAndData(errorMessage?: string): void {
   }
 }
 
+function getFetchOptions(headers: Record<string, string>, targetUrl?: string): RequestInit {
+  const opts: RequestInit = { headers };
+  const url = targetUrl || serverState.endpoint;
+  if (url && (url.includes('localhost') || url.includes('127.0.0.1') || url.includes('[::1]'))) {
+    (opts as any).targetAddressSpace = 'loopback';
+  }
+  return opts;
+}
+
 export async function testConnection(
   targetEp?: string,
   targetTok?: string
@@ -43,9 +52,7 @@ export async function testConnection(
   serverState.error = '';
 
   try {
-    const res = await fetch(`${cleanEp}/api/config`, {
-      headers: { Accept: 'application/json' },
-    });
+    const res = await fetch(`${cleanEp}/api/config`, getFetchOptions({ Accept: 'application/json' }, cleanEp));
 
     if (!res.ok) {
       const errMsg = `Mã phản hồi HTTP ${res.status}`;
@@ -71,13 +78,12 @@ export async function testConnection(
       }
 
       // Test token with /api/stats
-      const statsRes = await fetch(`${cleanEp}/api/stats`, {
-        headers: {
-          Accept: 'application/json',
-          Authorization: `Bearer ${token}`,
-          'X-API-Key': token,
-        },
-      });
+      const statsHeaders: Record<string, string> = {
+        Accept: 'application/json',
+        Authorization: `Bearer ${token}`,
+        'X-API-Key': token,
+      };
+      const statsRes = await fetch(`${cleanEp}/api/stats`, getFetchOptions(statsHeaders, cleanEp));
 
       if (statsRes.status === 401) {
         const errMsg = 'Token xác thực không chính xác (401 Unauthorized)! Đã xoá sạch dữ liệu.';
@@ -104,7 +110,14 @@ export async function testConnection(
 
     return { success: true, authRequired: cfg.auth_required };
   } catch (err: any) {
-    const errMsg = `Không thể kết nối đến máy chủ: ${cleanEp}. Hãy đảm bảo Go server đang chạy lệnh 'ag-stats serve'.`;
+    const isRemote = typeof window !== 'undefined' &&
+      window.location.hostname !== 'localhost' &&
+      window.location.hostname !== '127.0.0.1';
+
+    let errMsg = `Không thể kết nối đến máy chủ: ${cleanEp}. Hãy đảm bảo Go server đang chạy lệnh 'ag-stats serve'.`;
+    if (isRemote && (cleanEp.includes('localhost') || cleanEp.includes('127.0.0.1'))) {
+      errMsg = `Trình duyệt chặn kết nối đến localhost (CORS / Local Network Access). Mở trực tiếp tại ${cleanEp} hoặc bật quyền trong Cài đặt trang web.`;
+    }
     clearAuthAndData(errMsg);
     return { success: false, error: errMsg };
   }
@@ -121,7 +134,7 @@ export async function fetchStats(_force = false): Promise<boolean> {
       headers['X-API-Key'] = serverState.token;
     }
 
-    const res = await fetch(`${serverState.endpoint}/api/stats`, { headers });
+    const res = await fetch(`${serverState.endpoint}/api/stats`, getFetchOptions(headers));
     if (!res.ok) {
       if (res.status === 401) {
         clearAuthAndData('Phiên làm việc hết hạn hoặc token không hợp lệ (401)! Đã xoá sạch dữ liệu.');
@@ -151,7 +164,7 @@ export async function fetchSessionDetail(id: string): Promise<SessionMetric | nu
       headers['X-API-Key'] = serverState.token;
     }
 
-    const res = await fetch(`${serverState.endpoint}/api/sessions/${encodeURIComponent(id)}`, { headers });
+    const res = await fetch(`${serverState.endpoint}/api/sessions/${encodeURIComponent(id)}`, getFetchOptions(headers));
     if (!res.ok) {
       if (res.status === 401) {
         clearAuthAndData('Phiên làm việc hết hạn hoặc token không hợp lệ (401)! Đã xoá sạch dữ liệu.');

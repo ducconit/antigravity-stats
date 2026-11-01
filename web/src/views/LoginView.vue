@@ -13,6 +13,10 @@ const isConnecting = ref(false);
 const localError = ref('');
 const localWarning = ref('');
 
+const isRemoteHost = typeof window !== 'undefined' &&
+  window.location.hostname !== 'localhost' &&
+  window.location.hostname !== '127.0.0.1';
+
 async function handleConnect() {
   localError.value = '';
   serverState.error = '';
@@ -103,7 +107,7 @@ onMounted(async () => {
             Antigravity Stats
           </h1>
           <span class="text-xs badge-accent px-2 py-0.5 rounded-full font-mono font-semibold">
-            v1.0
+            v1.1
           </span>
         </div>
         <p class="text-xs text-ink-muted">
@@ -129,6 +133,32 @@ onMounted(async () => {
           class="p-3.5 rounded-xl bg-red-950/40 border border-red-800/50 text-red-300 text-xs font-mono leading-relaxed"
         >
           ✕ {{ localError || serverState.error }}
+        </div>
+
+        <!-- Browser CORS / Local Network Access Helper (When on GitHub Pages or remote host) -->
+        <div
+          v-if="(localError || serverState.error) && isRemoteHost && (endpoint.includes('localhost') || endpoint.includes('127.0.0.1'))"
+          class="p-4 rounded-xl bg-amber-950/30 border border-amber-800/50 text-amber-200/90 text-xs space-y-2.5"
+        >
+          <div class="font-bold flex items-center gap-2 text-amber-300">
+            <span>🛡️</span>
+            <span>Khắc phục lỗi CORS / Quyền Mạng cục bộ (Chrome/Edge):</span>
+          </div>
+          <div class="space-y-2 pl-1 leading-relaxed text-[11px]">
+            <div class="p-2.5 rounded-lg bg-paper border border-rule font-sans">
+              <strong class="text-cool block mb-0.5">💡 Cách 1 (Khuyên dùng - Nhanh nhất):</strong>
+              Mở trực tiếp Web Dashboard trên máy tính tại:
+              <a :href="endpoint" target="_blank" class="underline text-hit font-mono font-bold hover:text-cool ml-1">{{ endpoint }}</a>
+              <span class="text-ink-dim block mt-0.5">(Chạy cùng nguồn same-origin, không bị trình duyệt chặn).</span>
+            </div>
+            <div class="p-2.5 rounded-lg bg-paper border border-rule font-sans">
+              <strong class="text-accent block mb-0.5">💡 Cách 2 (Bật quyền trên GitHub Pages):</strong>
+              Bấm biểu tượng <strong>Cài đặt trang</strong> (hình ổ khóa / công tắc bên trái thanh URL trình duyệt)
+              &rarr; <strong>Cài đặt trang web (Site settings)</strong>
+              &rarr; Tìm mục <strong>"Quyền truy cập mạng cục bộ" (Local network access)</strong>
+              &rarr; Chọn <strong>Cho phép (Allow)</strong> rồi tải lại trang.
+            </div>
+          </div>
         </div>
 
         <div

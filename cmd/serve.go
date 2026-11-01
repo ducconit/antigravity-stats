@@ -40,18 +40,28 @@ var serveCmd = &cobra.Command{
 
 		scanner := analyzer.NewScanner(dataDir)
 		server := web.NewServer(scanner, serveHost, servePort, effectiveToken)
+		if staticFS != nil {
+			server.SetStaticFS(staticFS)
+		}
 
 		url := fmt.Sprintf("http://%s:%d", serveHost, servePort)
-		dashboardURL := web.DefaultDashboardURL
+		launchURL := url
+		if staticFS == nil {
+			launchURL = web.DefaultDashboardURL
+		}
 		if autoOpen {
 			go func() {
 				time.Sleep(500 * time.Millisecond)
-				openBrowser(dashboardURL)
+				openBrowser(launchURL)
 			}()
 		}
 
-		fmt.Printf("🚀 Antigravity API Server đang chạy tại: %s\n", url)
-		fmt.Printf("🌐 Web Dashboard (GitHub Pages): %s\n", dashboardURL)
+		fmt.Printf("🚀 Antigravity Web Dashboard đang chạy tại: %s\n", url)
+		if staticFS != nil {
+			fmt.Printf("🌐 Web Client Online (GitHub Pages): %s\n", web.DefaultDashboardURL)
+		} else {
+			fmt.Printf("🌐 Web Dashboard (GitHub Pages): %s\n", web.DefaultDashboardURL)
+		}
 		fmt.Printf("📂 Nguồn dữ liệu: %s\n", scanner.DataDir())
 		if effectiveToken != "" {
 			fmt.Printf("🔒 Chế độ xác thực: BẬT (API Key / Token: Yêu cầu Bearer Token hoặc X-API-Key)\n")

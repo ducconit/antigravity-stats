@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"antigravity-stats/internal/analyzer"
@@ -411,6 +412,57 @@ func TestServerAuthentication(t *testing.T) {
 
 		if w.Code != http.StatusTemporaryRedirect {
 			t.Errorf("expected 307 Temporary Redirect, got %d", w.Code)
+		}
+	})
+}
+
+// TestServerWithStaticFS verifies that embedded/local Web UI assets are served directly
+// and SPA client routes fallback to index.html without redirects.
+func TestServerWithStaticFS(t *testing.T) {
+	scanner, _ := setupTestEnvironment(t)
+	server := NewServer(scanner, "127.0.0.1", 0, "")
+
+	// Create a dummy filesystem with an index.html and test asset
+	dummyFS := http.Dir(t.TempDir())
+	indexPath := filepath.Join(string(dummyFS), "index.html")
+	if err := os.WriteFile(indexPath, []byte("<!DOCTYPE html><html><body>Dashboard</body></html>"), 0644); err != nil {
+		t.Fatalf("failed to write dummy index.html: %v", err)
+	}
+
+	server.SetStaticFS(dummyFS)
+	if !server.HasStaticFS() {
+		t.Errorf("expected HasStaticFS to be true")
+	}
+
+	handler := server.Handler()
+
+	t.Run("GET / with HTML Accept serves index.html (200 OK)", func(t *testing.T) {
+		req := httptest.NewRequest("GET", "/", nil)
+		req.Header.Set("Accept", "text/html")
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		if w.Code != http.StatusOK {
+			t.Errorf("expected 200 OK, got %d", w.Code)
+		}
+		body := w.Body.String()
+		if !strings.Contains(body, "Dashboard") {
+			t.Errorf("expected body to contain 'Dashboard', got %s", body)
+		}
+	})
+
+	t.Run("GET /login with HTML Accept falls back to index.html (SPA routing)", func(t *testing.T) {
+		req := httptest.NewRequest("GET", "/login", nil)
+		req.Header.Set("Accept", "text/html")
+		w := httptest.NewRecorder()
+		handler.ServeHTTP(w, req)
+
+		if w.Code != http.StatusOK {
+			t.Errorf("expected 200 OK, got %d", w.Code)
+		}
+		body := w.Body.String()
+		if !strings.Contains(body, "Dashboard") {
+			t.Errorf("expected body to contain 'Dashboard', got %s", body)
 		}
 	})
 }

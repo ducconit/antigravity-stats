@@ -16,7 +16,12 @@
     <meta name="twitter:title" content="Antigravity Stats - LLM Token &amp; Cost Visualizer" />
     <meta name="twitter:description" content="Trực quan hóa tiêu thụ token, theo dõi Context Cache và chi phí cho Google Antigravity." />
     <meta name="twitter:image" content="https://ducconit.github.io/antigravity-stats/og-image.png" />
-    <script>window.__appStartTime = performance.now();</script>
+    <script>
+      if (location.protocol === 'http:' && location.hostname.endsWith('github.io')) {
+        location.replace(location.href.replace(/^http:/, 'https:'));
+      }
+      window.__appStartTime = performance.now();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -46,7 +51,7 @@
       <!-- App Name & Badge -->
       <div style="font-size:16px;font-weight:700;letter-spacing:-0.02em;margin-bottom:8px;display:flex;align-items:center;gap:8px;">
         <span>Antigravity Stats</span>
-        <span style="font-size:10px;background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);padding:2px 8px;border-radius:999px;">v1.0</span>
+        <span style="font-size:10px;background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);padding:2px 8px;border-radius:999px;">v1.1</span>
       </div>
       <div style="font-size:12px;color:#8b949e;margin-bottom:24px;">
         Đang khởi tạo giao diện ứng dụng...

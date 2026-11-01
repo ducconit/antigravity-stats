@@ -5,17 +5,54 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"antigravity-stats/internal/analyzer"
 )
 
 func (s *Server) handleIndex(w http.ResponseWriter, r *http.Request) {
+	// If path is an API path that wasn't matched, return 404
+	if strings.HasPrefix(r.URL.Path, "/api/") {
+		http.NotFound(w, r)
+		return
+	}
+
+	// If staticFS is configured, try to serve requested file or fallback to SPA index.html
+	if s.staticFS != nil {
+		cleanPath := strings.TrimPrefix(r.URL.Path, "/")
+		if cleanPath == "" {
+			cleanPath = "index.html"
+		}
+
+		// Try opening the requested file
+		f, err := s.staticFS.Open(cleanPath)
+		if err == nil {
+			stat, err := f.Stat()
+			f.Close()
+			if err == nil && !stat.IsDir() {
+				http.FileServer(s.staticFS).ServeHTTP(w, r)
+				return
+			}
+		}
+
+		// Fallback for HTML5 history mode SPA routing (e.g. /login, /session/:id)
+		if strings.Contains(r.Header.Get("Accept"), "text/html") {
+			indexFile, err := s.staticFS.Open("index.html")
+			if err == nil {
+				defer indexFile.Close()
+				w.Header().Set("Content-Type", "text/html; charset=utf-8")
+				http.ServeContent(w, r, "index.html", time.Time{}, indexFile)
+				return
+			}
+		}
+	}
+
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
 		return
 	}
 
-	// Browser requesting HTML is redirected directly to the GitHub Pages hosted dashboard
+	// Browser requesting HTML without staticFS is redirected directly to the GitHub Pages hosted dashboard
 	if strings.Contains(r.Header.Get("Accept"), "text/html") {
 		http.Redirect(w, r, DefaultDashboardURL, http.StatusTemporaryRedirect)
 		return
