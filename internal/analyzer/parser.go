@@ -81,8 +81,19 @@ func NormalizeModelName(raw string) string {
 		return "Gemini 3.5 Flash (Medium)"
 	}
 
-	trimmed = strings.Trim(trimmed, "`'\"")
-	return trimmed
+	validModelKeywords := []string{
+		"gemini", "claude", "gpt", "deepseek", "chatgpt",
+		"llama", "mistral", "qwen", "sonnet", "opus", "haiku",
+		"flash", "pro", "argon",
+	}
+	for _, kw := range validModelKeywords {
+		if strings.Contains(lower, kw) {
+			trimmed = strings.Trim(trimmed, "`'\"")
+			return trimmed
+		}
+	}
+
+	return "Gemini 3.5 Flash (Medium)"
 }
 
 func truncateRunes(s string, maxRunes int) string {
@@ -160,6 +171,7 @@ func ParseTranscriptFile(sessionID, filePath string, meta conversationMeta) (*Se
 		ParentConversationID: meta.ParentConversationID,
 		NestingDepth:         meta.NestingDepth,
 		IsSubagent:           isSubagent,
+		ClientTool:           meta.ClientTool,
 	}
 
 	currentModel := initialModel
@@ -291,6 +303,8 @@ func ParseTranscriptFile(sessionID, filePath string, meta conversationMeta) (*Se
 					ToolCalls:       tools,
 					ThinkingPreview: thinkingPreview,
 					ContentPreview:  contentPreview,
+					Content:         raw.Content,
+					Thinking:        raw.Thinking,
 				})
 			}
 		}

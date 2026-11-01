@@ -189,3 +189,79 @@ func TestSubagentDetectionAndTitleExtraction(t *testing.T) {
 		t.Errorf("expected Title to contain task description, got %q", session.Title)
 	}
 }
+
+func TestMultiEnvironmentAndToolStats(t *testing.T) {
+	tempParent := t.TempDir()
+	appDir := filepath.Join(tempParent, "antigravity")
+	cliDir := filepath.Join(tempParent, "antigravity-cli")
+
+	// Create app session
+	appLogDir := filepath.Join(appDir, "brain", "sess-app", ".system_generated", "logs")
+	if err := os.MkdirAll(appLogDir, 0755); err != nil {
+		t.Fatalf("failed to create appLogDir: %v", err)
+	}
+	appContent := `{"step_index":0,"source":"USER_EXPLICIT","type":"USER_INPUT","status":"DONE","created_at":"2026-10-31T12:00:00Z","content":"<USER_REQUEST>Build app</USER_REQUEST>"}
+{"step_index":1,"source":"MODEL","type":"PLANNER_RESPONSE","status":"DONE","created_at":"2026-10-31T12:00:01Z","input_tokens":100,"cache_read_tokens":400,"output_tokens":50,"tool_calls":[{"name":"run_command","args":{}},{"name":"read_file","args":{}}]}`
+	if err := os.WriteFile(filepath.Join(appLogDir, "transcript.jsonl"), []byte(appContent), 0644); err != nil {
+		t.Fatalf("failed to write app transcript: %v", err)
+	}
+
+	// Create CLI session
+	cliLogDir := filepath.Join(cliDir, "brain", "sess-cli", ".system_generated", "logs")
+	if err := os.MkdirAll(cliLogDir, 0755); err != nil {
+		t.Fatalf("failed to create cliLogDir: %v", err)
+	}
+	cliContent := `{"step_index":0,"source":"USER_EXPLICIT","type":"USER_INPUT","status":"DONE","created_at":"2026-10-31T13:00:00Z","content":"<USER_REQUEST>Run CLI command</USER_REQUEST>"}
+{"step_index":1,"source":"MODEL","type":"PLANNER_RESPONSE","status":"DONE","created_at":"2026-10-31T13:00:01Z","input_tokens":200,"cache_read_tokens":600,"output_tokens":80,"tool_calls":[{"name":"run_command","args":{}}]}`
+	if err := os.WriteFile(filepath.Join(cliLogDir, "transcript.jsonl"), []byte(cliContent), 0644); err != nil {
+		t.Fatalf("failed to write cli transcript: %v", err)
+	}
+
+	scanner := NewScanner(appDir)
+	stats, sessions, err := scanner.ScanAll()
+	if err != nil {
+		t.Fatalf("ScanAll failed: %v", err)
+	}
+
+	if len(sessions) != 2 {
+		t.Fatalf("expected 2 sessions across environments, got %d", len(sessions))
+	}
+
+	// Check Tools stats
+	if len(stats.Tools) != 2 {
+		t.Fatalf("expected 2 tools, got %d", len(stats.Tools))
+	}
+	toolNames := make(map[string]bool)
+	for _, tool := range stats.Tools {
+		toolNames[tool.Name] = true
+	}
+	if !toolNames["Antigravity App"] || !toolNames["Antigravity CLI"] {
+		t.Errorf("expected Antigravity App and Antigravity CLI in tools, got %v", toolNames)
+	}
+
+	// Check Agent Tools stats
+	agentToolMap := make(map[string]int64)
+	for _, at := range stats.AgentTools {
+		agentToolMap[at.Name] = at.CallCount
+	}
+	if agentToolMap["run_command"] != 2 {
+		t.Errorf("expected run_command call_count 2, got %d", agentToolMap["run_command"])
+	}
+	if agentToolMap["read_file"] != 1 {
+		t.Errorf("expected read_file call_count 1, got %d", agentToolMap["read_file"])
+	}
+
+	// Check System Models stats
+	if len(stats.Models) == 0 {
+		t.Errorf("expected non-empty system Models stats")
+	}
+
+	// Check GetSessionDetail for CLI session
+	cliDetail, err := scanner.GetSessionDetail("sess-cli")
+	if err != nil {
+		t.Fatalf("GetSessionDetail for sess-cli failed: %v", err)
+	}
+	if cliDetail.ClientTool != "Antigravity CLI" {
+		t.Errorf("expected ClientTool 'Antigravity CLI', got %q", cliDetail.ClientTool)
+	}
+}

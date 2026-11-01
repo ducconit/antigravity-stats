@@ -199,7 +199,7 @@ func TestServerConfigAndCORS(t *testing.T) {
 		if err := json.Unmarshal(w.Body.Bytes(), &cfg); err != nil {
 			t.Fatalf("failed to decode config json: %v", err)
 		}
-		if cfg.Status != "ok" || cfg.AuthRequired != false || cfg.Version != "1.0.0" {
+		if cfg.Status != "ok" || cfg.AuthRequired != false || cfg.Version != "1.1.0" {
 			t.Errorf("unexpected config response: %+v", cfg)
 		}
 	})

@@ -54,7 +54,7 @@ export async function testConnection(
     }
 
     const cfg: ConfigResponse = await res.json();
-    serverState.serverVersion = cfg.version || '1.0.0';
+    serverState.serverVersion = cfg.version || '1.1.0';
     serverState.authRequired = !!cfg.auth_required;
     serverState.dataDir = cfg.data_dir || '';
 

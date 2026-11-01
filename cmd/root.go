@@ -17,7 +17,7 @@ var (
 // RootCmd is the base command for the antigravity-stats CLI.
 var RootCmd = &cobra.Command{
 	Use:     "ag-stats",
-	Version: "1.0.0",
+	Version: "1.1.0",
 	Short:   "Antigravity Token & Cost Analytics Tool",
 	Long: `⚡ Antigravity Token & Cost Visualizer
 Phân tích và trực quan hóa số lượng token (Input, Cache Read, Output),

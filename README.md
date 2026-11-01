@@ -6,7 +6,7 @@
 
 **Công cụ dòng lệnh (CLI) và Web Dashboard phân tích số lượng Token, tỷ lệ Cache Hit, Chi phí LLM ($ & VNĐ) và Sơ đồ Waterfall Steps trong Google Antigravity.**
 
-[![Release](https://img.shields.io/badge/Release-v1.0.0-6366F1?style=for-the-badge&logo=git)](https://github.com/ducconit/antigravity-stats/releases/latest)
+[![Release](https://img.shields.io/badge/Release-v1.1.0-6366F1?style=for-the-badge&logo=git)](https://github.com/ducconit/antigravity-stats/releases/latest)
 [![Web Dashboard](https://img.shields.io/badge/Web_Client-GitHub_Pages-10B981?style=for-the-badge&logo=githubpages)](https://ducconit.github.io/antigravity-stats/)
 [![Go Version](https://img.shields.io/badge/Go-1.22%2B-00ADD8?style=for-the-badge&logo=go)](https://golang.org)
 [![Cobra](https://img.shields.io/badge/CLI-Cobra-38BDF8?style=for-the-badge&logo=gnubash)](https://github.com/spf13/cobra)
@@ -71,7 +71,7 @@ Bạn có thể sử dụng `ag-stats` theo 2 cách cực kỳ đơn giản:
 
 ### Cách 1: Tải nhanh Binary dựng sẵn từ GitHub Releases (Khuyên dùng - Không cần cài Go)
 
-Truy cập trang **[GitHub Releases v1.0.0](https://github.com/ducconit/antigravity-stats/releases/latest)** và tải file thực thi phù hợp với hệ điều hành của bạn:
+Truy cập trang **[GitHub Releases v1.1.0](https://github.com/ducconit/antigravity-stats/releases/latest)** và tải file thực thi phù hợp với hệ điều hành của bạn:
 
 | Hệ điều hành | File tải về | Lệnh chạy nhanh trên Terminal |
 | :--- | :--- | :--- |

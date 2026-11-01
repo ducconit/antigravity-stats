@@ -18,6 +18,8 @@ export interface StepMetric {
   tool_calls?: ToolCallInfo[];
   thinking_preview?: string;
   content_preview?: string;
+  content?: string;
+  thinking?: string;
 }
 
 export interface ModelUsageStat {
@@ -53,6 +55,7 @@ export interface SessionMetric {
   parent_conversation_id?: string;
   nesting_depth?: number;
   is_subagent?: boolean;
+  client_tool?: string;
   steps?: StepMetric[];
 }
 
@@ -85,6 +88,29 @@ export interface DailyMetric {
   cost_vnd: number;
 }
 
+export interface ClientToolStat {
+  name: string;
+  icon: string;
+  data_dir: string;
+  session_count: number;
+  total_tokens: number;
+  input_tokens: number;
+  cache_read_tokens: number;
+  output_tokens: number;
+  cache_hit_rate: number;
+  cost_usd: number;
+  cost_vnd: number;
+  active_projects: number;
+  last_activity: string;
+}
+
+export interface AgentToolStat {
+  name: string;
+  call_count: number;
+  category: string;
+  server_group?: string;
+}
+
 export interface GlobalStats {
   total_sessions: number;
   active_token_sessions: number;
@@ -97,6 +123,9 @@ export interface GlobalStats {
   total_cost_usd: number;
   total_cost_vnd: number;
   model_distribution: Record<string, number>;
+  models?: ModelUsageStat[];
+  tools?: ClientToolStat[];
+  agent_tools?: AgentToolStat[];
   daily_metrics: DailyMetric[];
   recent_sessions: SessionMetric[];
   projects: ProjectStats[];

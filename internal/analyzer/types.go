@@ -18,6 +18,8 @@ type StepMetric struct {
 	ToolCalls       []ToolCallInfo `json:"tool_calls,omitempty"`
 	ThinkingPreview string         `json:"thinking_preview,omitempty"`
 	ContentPreview  string         `json:"content_preview,omitempty"`
+	Content         string         `json:"content,omitempty"`
+	Thinking        string         `json:"thinking,omitempty"`
 }
 
 // ToolCallInfo holds brief info about a tool invocation.
@@ -61,6 +63,7 @@ type SessionMetric struct {
 	ParentConversationID string           `json:"parent_conversation_id,omitempty"`
 	NestingDepth         int              `json:"nesting_depth"`
 	IsSubagent           bool             `json:"is_subagent"`
+	ClientTool           string           `json:"client_tool,omitempty"` // "Antigravity App", "Antigravity CLI", "Antigravity IDE"
 	Steps                []StepMetric     `json:"steps,omitempty"`
 }
 
@@ -95,6 +98,31 @@ type DailyMetric struct {
 	CostVND         float64 `json:"cost_vnd"`
 }
 
+// ClientToolStat represents usage metrics for an Antigravity tool/client environment.
+type ClientToolStat struct {
+	Name            string  `json:"name"`            // "Antigravity App", "Antigravity CLI", "Antigravity IDE"
+	Icon            string  `json:"icon"`            // "desktop", "terminal", "code"
+	DataDir         string  `json:"data_dir"`
+	SessionCount    int     `json:"session_count"`
+	TotalTokens     int64   `json:"total_tokens"`
+	InputTokens     int64   `json:"input_tokens"`
+	CacheReadTokens int64   `json:"cache_read_tokens"`
+	OutputTokens    int64   `json:"output_tokens"`
+	CacheHitRate    float64 `json:"cache_hit_rate"`
+	CostUSD         float64 `json:"cost_usd"`
+	CostVND         float64 `json:"cost_vnd"`
+	ActiveProjects  int     `json:"active_projects"`
+	LastActivity    string  `json:"last_activity"`
+}
+
+// AgentToolStat represents invocation metrics for agent tool calls.
+type AgentToolStat struct {
+	Name        string `json:"name"`                   // "run_command", "view_file", etc.
+	CallCount   int64  `json:"call_count"`
+	Category    string `json:"category"`               // "Execution", "Filesystem", "Search", "MCP", "Orchestration"
+	ServerGroup string `json:"server_group,omitempty"` // e.g. "Chrome DevTools MCP", "Sequential Thinking MCP"
+}
+
 // GlobalStats contains aggregate metrics across all analyzed sessions.
 type GlobalStats struct {
 	TotalSessions       int              `json:"total_sessions"`
@@ -109,6 +137,9 @@ type GlobalStats struct {
 	TotalCostVND        float64          `json:"total_cost_vnd"`
 	DailyMetrics        []DailyMetric    `json:"daily_metrics"`
 	ModelDistribution   map[string]int64 `json:"model_distribution"`
+	Models              []ModelUsageStat `json:"models"`      // Detailed model breakdown across system
+	Tools               []ClientToolStat `json:"tools"`       // Antigravity App vs CLI vs IDE
+	AgentTools          []AgentToolStat  `json:"agent_tools"` // Top agent tool calls
 	Projects            []ProjectStats   `json:"projects"`
 	RecentSessions      []SessionMetric  `json:"recent_sessions"`
 }

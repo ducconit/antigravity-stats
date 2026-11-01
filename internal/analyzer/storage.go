@@ -21,6 +21,7 @@ type conversationMeta struct {
 	AgentName            string
 	ParentConversationID string
 	NestingDepth         int
+	ClientTool           string
 }
 
 var annotationTitleRegex = regexp.MustCompile(`title:\s*"([^"]+)"`)

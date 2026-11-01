@@ -25,7 +25,7 @@ func (s *Server) handleIndex(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(RootResponse{
 		Service:      "Antigravity Token Visualizer API Server",
-		Version:      "1.0.0",
+		Version:      "1.1.0",
 		Status:       "running",
 		AuthRequired: s.authToken != "",
 		DashboardURL: DefaultDashboardURL,
@@ -36,7 +36,7 @@ func (s *Server) handleConfig(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(ConfigResponse{
 		Status:       "ok",
-		Version:      "1.0.0",
+		Version:      "1.1.0",
 		AuthRequired: s.authToken != "",
 		DataDir:      s.scanner.DataDir(),
 	})
@@ -87,6 +87,7 @@ func (s *Server) handleSessions(w http.ResponseWriter, r *http.Request) {
 		ParentConversationID string                    `json:"parent_conversation_id"`
 		NestingDepth         int                       `json:"nesting_depth"`
 		IsSubagent           bool                      `json:"is_subagent"`
+		ClientTool           string                    `json:"client_tool,omitempty"`
 	}
 
 	list := make([]SessionListItem, 0, len(sessions))
@@ -112,6 +113,7 @@ func (s *Server) handleSessions(w http.ResponseWriter, r *http.Request) {
 			ParentConversationID: s.ParentConversationID,
 			NestingDepth:         s.NestingDepth,
 			IsSubagent:           s.IsSubagent,
+			ClientTool:           s.ClientTool,
 		})
 	}
 

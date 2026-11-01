@@ -2,7 +2,7 @@
 import { ref, computed, watch, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { serverState, fetchSessionDetail, disconnect } from '../stores/server';
-import type { SessionMetric } from '../types';
+import type { SessionMetric, StepMetric } from '../types';
 
 const route = useRoute();
 const router = useRouter();
@@ -19,6 +19,33 @@ const stepSearchQuery = ref('');
 const stepTypeFilter = ref<'all' | 'user' | 'model' | 'tool'>('all');
 const expandedThinking = ref<Record<number, boolean>>({});
 const allThinkingExpanded = ref(false);
+const expandedSteps = ref<Record<number, boolean>>({});
+const allDetailsExpanded = ref(false);
+
+function toggleStepExpanded(stepIndex: number) {
+  expandedSteps.value[stepIndex] = !expandedSteps.value[stepIndex];
+}
+
+function isStepExpanded(stepIndex: number): boolean {
+  return !!expandedSteps.value[stepIndex];
+}
+
+function hasDetailedContent(step: StepMetric): boolean {
+  if (!step.content) return false;
+  const previewLen = step.content_preview?.length || 0;
+  return step.content.length > previewLen || (step.content_preview?.endsWith('...') ?? false);
+}
+
+function toggleAllDetails() {
+  allDetailsExpanded.value = !allDetailsExpanded.value;
+  if (session.value?.steps) {
+    for (const step of session.value.steps) {
+      if (hasDetailedContent(step)) {
+        expandedSteps.value[step.step_index] = allDetailsExpanded.value;
+      }
+    }
+  }
+}
 
 // Chat Virtualization / Reverse Infinite Scroll
 const CHUNK_SIZE = 25;
@@ -267,6 +294,8 @@ watch(
       stepTypeFilter.value = 'all';
       expandedThinking.value = {};
       allThinkingExpanded.value = false;
+      expandedSteps.value = {};
+      allDetailsExpanded.value = false;
       loadSession();
     }
   },
@@ -585,6 +614,16 @@ watch(
                 <span>🧠</span>
                 <span class="hidden sm:inline">{{ allThinkingExpanded ? 'Thu gọn CoT' : 'Mở rộng CoT' }}</span>
               </button>
+
+              <!-- Expand/Collapse Full Details -->
+              <button
+                @click="toggleAllDetails"
+                class="px-2 py-1 rounded bg-paper hover:bg-paper-subtle border border-rule text-[11px] font-mono text-ink-muted hover:text-ink transition flex items-center gap-1 cursor-pointer"
+                title="Mở rộng hoặc thu gọn toàn bộ nội dung chat chi tiết"
+              >
+                <span>📜</span>
+                <span class="hidden sm:inline">{{ allDetailsExpanded ? 'Thu gọn chat' : 'Mở rộng full chat' }}</span>
+              </button>
             </div>
           </div>
 
@@ -656,7 +695,24 @@ watch(
 
                   <!-- User Chat Bubble -->
                   <div class="bg-paper-card border border-cool-border rounded-2xl rounded-tr-sm p-4 text-xs font-mono text-ink whitespace-pre-wrap leading-relaxed shadow-sm selection:bg-cool/20 w-fit max-w-full">
-                    {{ cleanUserContent(step.content_preview) }}
+                    <div v-if="!isStepExpanded(step.step_index)">
+                      {{ cleanUserContent(step.content_preview) }}
+                    </div>
+                    <div v-else class="max-h-[600px] overflow-y-auto pr-1">
+                      {{ cleanUserContent(step.content || step.content_preview) }}
+                    </div>
+
+                    <!-- Expand / Details Button -->
+                    <button
+                      v-if="hasDetailedContent(step)"
+                      type="button"
+                      @click="toggleStepExpanded(step.step_index)"
+                      class="mt-2.5 px-2.5 py-1 rounded-md text-[11px] font-mono text-cool hover:text-paper bg-cool/10 hover:bg-cool transition flex items-center gap-1.5 cursor-pointer select-none border border-cool/20"
+                      :title="isStepExpanded(step.step_index) ? 'Thu gọn lại' : 'Xem toàn bộ nội dung chi tiết'"
+                    >
+                      <span>{{ isStepExpanded(step.step_index) ? '▲ Thu gọn' : '🔍 Xem chi tiết đầy đủ' }}</span>
+                      <span class="text-[10px] opacity-75 font-normal">({{ formatNum((step.content || '').length) }} ký tự)</span>
+                    </button>
                   </div>
                 </div>
 
@@ -722,7 +778,7 @@ watch(
                         v-if="expandedThinking[step.step_index]"
                         class="p-3.5 border-t border-rule/50 text-ink-dim whitespace-pre-wrap leading-relaxed max-h-96 overflow-y-auto selection:bg-cool/20"
                       >
-                        {{ step.thinking_preview }}
+                        {{ step.thinking || step.thinking_preview }}
                       </div>
                     </div>
 
@@ -747,11 +803,31 @@ watch(
                     </div>
 
                     <!-- Assistant Content -->
-                    <div
-                      v-if="step.content_preview"
-                      class="font-mono text-ink whitespace-pre-wrap leading-relaxed selection:bg-hit/20"
-                    >
-                      {{ step.content_preview }}
+                    <div v-if="step.content_preview || step.content" class="space-y-2">
+                      <div
+                        v-if="!isStepExpanded(step.step_index)"
+                        class="font-mono text-ink whitespace-pre-wrap leading-relaxed selection:bg-hit/20"
+                      >
+                        {{ step.content_preview }}
+                      </div>
+                      <div
+                        v-else
+                        class="font-mono text-ink whitespace-pre-wrap leading-relaxed selection:bg-hit/20 max-h-[650px] overflow-y-auto p-3 rounded-xl bg-paper-subtle/50 border border-rule/60 pr-2"
+                      >
+                        {{ step.content || step.content_preview }}
+                      </div>
+
+                      <!-- Expand / Details Button -->
+                      <button
+                        v-if="hasDetailedContent(step)"
+                        type="button"
+                        @click="toggleStepExpanded(step.step_index)"
+                        class="mt-2 px-2.5 py-1 rounded-md text-[11px] font-mono text-cool hover:text-paper bg-cool/10 hover:bg-cool transition flex items-center gap-1.5 cursor-pointer select-none border border-cool/20 shadow-xs"
+                        :title="isStepExpanded(step.step_index) ? 'Thu gọn lại' : 'Xem toàn bộ nội dung chi tiết'"
+                      >
+                        <span>{{ isStepExpanded(step.step_index) ? '▲ Thu gọn chi tiết' : '🔍 Xem chi tiết đầy đủ' }}</span>
+                        <span class="text-[10px] opacity-75 font-normal">({{ formatNum((step.content || '').length) }} ký tự)</span>
+                      </button>
                     </div>
 
                     <!-- Token Metrics Footer -->
