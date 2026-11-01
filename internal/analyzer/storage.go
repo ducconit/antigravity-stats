@@ -38,6 +38,29 @@ func readTitleFromAnnotations(annotationsDir, id string) string {
 	return ""
 }
 
+// cleanPreviewTitle extracts a clean, readable one-line title from a preview string.
+func cleanPreviewTitle(preview string) string {
+	trimmed := strings.TrimSpace(preview)
+	if trimmed == "" {
+		return ""
+	}
+	lines := strings.Split(trimmed, "\n")
+	for _, l := range lines {
+		l = strings.TrimSpace(l)
+		if l == "" {
+			continue
+		}
+		// Strip markdown headers (###), lists (*, -), blockquotes (>), formatting marks
+		l = strings.TrimLeft(l, "#*-> \t")
+		l = strings.Trim(l, "`'\"")
+		l = strings.TrimSpace(l)
+		if l != "" {
+			return truncateRunes(l, 100)
+		}
+	}
+	return ""
+}
+
 // loadSummariesFromSQLite loads titles and metadata from conversation_summaries.db.
 func loadSummariesFromSQLite(dataDir string) map[string]conversationMeta {
 	metaMap := make(map[string]conversationMeta)
@@ -84,6 +107,9 @@ func loadSummariesFromSQLite(dataDir string) map[string]conversationMeta {
 		if err := rows.Scan(&id, &title, &preview, &workspaceURIs, &lastModStr, &proj, &agentName, &parentID, &depth); err == nil {
 			normalized := strings.Replace(lastModStr, " ", "T", 1)
 			t, _ := time.Parse(time.RFC3339, normalized)
+			if title == "" && preview != "" {
+				title = cleanPreviewTitle(preview)
+			}
 			if title == "" {
 				title = readTitleFromAnnotations(annotationsDir, id)
 			}

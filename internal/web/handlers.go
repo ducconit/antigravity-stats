@@ -77,33 +77,41 @@ func (s *Server) handleSessions(w http.ResponseWriter, r *http.Request) {
 		TotalTokens  int64                   `json:"total_tokens"`
 		InputTokens  int64                   `json:"input_tokens"`
 		CacheRead    int64                   `json:"cache_read_tokens"`
-		OutputTokens int64                   `json:"output_tokens"`
-		CacheHitRate float64                 `json:"cache_hit_rate"`
-		CostUSD      float64                 `json:"cost_usd"`
-		CostVND      float64                 `json:"cost_vnd"`
-		CreatedAt    string                  `json:"created_at"`
-		LastModified string                  `json:"last_modified"`
+		OutputTokens         int64                     `json:"output_tokens"`
+		CacheHitRate         float64                   `json:"cache_hit_rate"`
+		CostUSD              float64                   `json:"cost_usd"`
+		CostVND              float64                   `json:"cost_vnd"`
+		CreatedAt            string                    `json:"created_at"`
+		LastModified         string                    `json:"last_modified"`
+		AgentName            string                    `json:"agent_name"`
+		ParentConversationID string                    `json:"parent_conversation_id"`
+		NestingDepth         int                       `json:"nesting_depth"`
+		IsSubagent           bool                      `json:"is_subagent"`
 	}
 
 	list := make([]SessionListItem, 0, len(sessions))
 	for _, s := range sessions {
 		list = append(list, SessionListItem{
-			ID:           s.ID,
-			Title:        s.Title,
-			ProjectName:  s.ProjectName,
-			Workspace:    s.Workspace,
-			ModelName:    s.ModelName,
-			Models:       s.Models,
-			StepCount:    s.StepCount,
-			TotalTokens:  s.TotalTokens,
-			InputTokens:  s.InputTokens,
-			CacheRead:    s.CacheReadTokens,
-			OutputTokens: s.OutputTokens,
-			CacheHitRate: s.CacheHitRate,
-			CostUSD:      s.CostUSD,
-			CostVND:      s.CostVND,
-			CreatedAt:    s.CreatedAt.Format("2006-01-02 15:04:05"),
-			LastModified: s.LastModified.Format("2006-01-02 15:04:05"),
+			ID:                   s.ID,
+			Title:                s.Title,
+			ProjectName:          s.ProjectName,
+			Workspace:            s.Workspace,
+			ModelName:            s.ModelName,
+			Models:               s.Models,
+			StepCount:            s.StepCount,
+			TotalTokens:          s.TotalTokens,
+			InputTokens:          s.InputTokens,
+			CacheRead:            s.CacheReadTokens,
+			OutputTokens:         s.OutputTokens,
+			CacheHitRate:         s.CacheHitRate,
+			CostUSD:              s.CostUSD,
+			CostVND:              s.CostVND,
+			CreatedAt:            s.CreatedAt.Format("2006-01-02 15:04:05"),
+			LastModified:         s.LastModified.Format("2006-01-02 15:04:05"),
+			AgentName:            s.AgentName,
+			ParentConversationID: s.ParentConversationID,
+			NestingDepth:         s.NestingDepth,
+			IsSubagent:           s.IsSubagent,
 		})
 	}
 

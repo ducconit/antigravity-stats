@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
-import { serverState, fetchStats, fetchSessionDetail, disconnect } from '../stores/server';
+import { serverState, fetchStats, disconnect } from '../stores/server';
 import type { SessionMetric, ProjectStats } from '../types';
 import MascotByte from '../components/MascotByte.vue';
 import DashboardSkeleton from '../components/DashboardSkeleton.vue';
-import WaterfallModal from '../components/WaterfallModal.vue';
 import SearchableSelect, { type SelectOption } from '../components/SearchableSelect.vue';
 import { Chart, registerables } from 'chart.js';
 
@@ -21,10 +20,6 @@ const selectedTypeFilter = ref('root');
 const selectedSortBy = ref('recent');
 const viewMode = ref<'project' | 'flat'>('project');
 const collapsedProjects = ref<Record<string, boolean>>({});
-
-// Modal state
-const selectedSession = ref<SessionMetric | null>(null);
-const isModalOpen = ref(false);
 
 // Chart references
 const modelChartCanvas = ref<HTMLCanvasElement | null>(null);
@@ -56,14 +51,8 @@ function toggleProject(name: string) {
   collapsedProjects.value[name] = !collapsedProjects.value[name];
 }
 
-async function openSessionDetail(id: string) {
-  const detail = await fetchSessionDetail(id);
-  if (detail) {
-    selectedSession.value = detail;
-    isModalOpen.value = true;
-  } else if (!serverState.isConnected) {
-    router.push({ name: 'login' });
-  }
+function openSessionDetail(id: string) {
+  router.push({ name: 'session-detail', params: { id } });
 }
 
 async function handleRefresh() {
@@ -74,11 +63,6 @@ async function handleRefresh() {
   } else if (!serverState.isConnected) {
     router.push({ name: 'login' });
   }
-}
-
-function closeDetailModal() {
-  isModalOpen.value = false;
-  selectedSession.value = null;
 }
 
 function handleChangeServer() {
@@ -539,11 +523,11 @@ onMounted(async () => {
         <div class="p-4 sm:p-5 border-b border-rule/60 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div class="min-w-0">
             <div class="flex items-center gap-2.5 flex-wrap">
-              <h2 class="text-sm sm:text-base font-bold text-ink">Khám phá Phiên làm việc (Sessions Explorer)</h2>
-              <span class="text-xs badge-cool px-2.5 py-0.5 rounded-full font-mono font-medium">
+              <h2 class="text-sm sm:text-base font-bold text-ink whitespace-nowrap">Khám phá Phiên làm việc (Sessions Explorer)</h2>
+              <span class="text-xs badge-cool px-2.5 py-0.5 rounded-full font-mono font-medium shrink-0">
                 {{ viewMode === 'project' ? `${filteredProjects.length} / ${stats?.projects?.length || 0} dự án` : `${allFlatSessions.length} hội thoại` }}
               </span>
-              <span v-if="isAnyFilterActive" class="text-[11px] badge-accent px-2 py-0.5 rounded-full font-mono font-medium">
+              <span v-if="isAnyFilterActive" class="text-[11px] badge-accent px-2 py-0.5 rounded-full font-mono font-medium shrink-0">
                 Đang lọc
               </span>
             </div>
@@ -721,8 +705,9 @@ onMounted(async () => {
               <div
                 v-for="s in p.sessions"
                 :key="s.id"
+                :data-session-id="s.id"
                 @click="openSessionDetail(s.id)"
-                class="px-6 sm:px-8 py-3 hover:bg-paper-subtle/70 cursor-pointer flex items-center justify-between gap-4 transition text-xs group"
+                class="session-row px-6 sm:px-8 py-3 hover:bg-paper-subtle/70 cursor-pointer flex items-center justify-between gap-4 transition text-xs group"
               >
                 <div class="min-w-0">
                   <div class="flex items-center gap-2">
@@ -769,8 +754,9 @@ onMounted(async () => {
           <div
             v-for="s in allFlatSessions"
             :key="s.id"
+            :data-session-id="s.id"
             @click="openSessionDetail(s.id)"
-            class="p-4 hover:bg-paper-subtle/70 cursor-pointer flex items-center justify-between gap-4 transition text-xs group"
+            class="session-row p-4 hover:bg-paper-subtle/70 cursor-pointer flex items-center justify-between gap-4 transition text-xs group"
           >
             <div class="min-w-0">
               <div class="flex items-center gap-2">
@@ -812,12 +798,5 @@ onMounted(async () => {
       </div>
     </template>
   </main>
-
-    <!-- Step Waterfall Modal -->
-    <WaterfallModal
-      :session="selectedSession"
-      :is-open="isModalOpen"
-      @close="closeDetailModal"
-    />
   </div>
 </template>

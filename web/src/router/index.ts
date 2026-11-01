@@ -29,6 +29,12 @@ const router = createRouter({
       meta: { requiresConnection: true },
     },
     {
+      path: '/sessions/:id',
+      name: 'session-detail',
+      component: () => import('../views/SessionDetailView.vue'),
+      meta: { requiresConnection: true },
+    },
+    {
       path: '/:pathMatch(.*)*',
       redirect: '/login',
     },
